@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Make a Wish 💖</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- 🌸 Message Screen -->
+  <div id="message-screen" class="hidden">
+    <div class="message-content">
+      <h2>Hey Baby 💖</h2>
+      <p class="handwritten"><span id="typed-text"></span></p>
+      <button class="gift-button" onclick="startCalendar(); triggerSparkles(event)">🎁 Open Your Gift</button>
+    </div>
+  </div>
+
+  <!-- 💌 Envelope Opening Screen -->
+  <div id="opening-screen">
+    <div class="envelope" onclick="revealMessage()">
+      <span class="envelope-text">Open Me 💌</span>
+    </div>
+  </div>
+
+  <!-- 🎀 Title & Instructions -->
+  <h1>💖 Happy 6 Months, Baby 💖</h1>
+  <p>Tap each card whenever you wish for something and it might come true.</p>
+
+  <!-- 📅 Calendar -->
+  <div class="calendar" id="calendar"></div>
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- 🎶 Music -->
+  <audio id="bg-music" src="song.mp3" preload="auto" loop></audio>
+
+  <!-- 🎉 Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+  <script>
+    const message = `It's nothing big but I just wanted to make you something special as you deserve it
+      for always putting up with me and making me feel as special as you do. I could thank you and want to thank you forever for how you treat me
+      and just how lucky I am to have you in my life. I'm so grateful for everything you do for me and for us, I know it isn't always easy
+      but you never give up on me or us and that means the world to me. You are genuinely perfect inside and out.
+      I couldn't ask for a better partner. You are the most beautiful, kind, caring, loving, understanding, funny, beautiful, smart,
+      cute, intelligent, beautiful, I could go on forever. I just want to make you feel a tiny bit special.
+      Since I know how to do this stuff I might as well put it to some use so here you goo. You deserve the world. I love you the most. 💖`;
+
+    let i = 0;
+    const speed = 30;
+
+    function typeWriter() {
+      const target = document.getElementById("typed-text");
+      if (i < message.length) {
+        const char = message[i] === "\n" ? "<br>" : message[i];
+        target.innerHTML += char;
+        i++;
+        setTimeout(typeWriter, speed);
+      }
+    }
+
+    function revealMessage() {
+      const screen = document.getElementById("opening-screen");
+      screen.classList.add("fade-out");
+      setTimeout(() => {
+        screen.style.display = "none";
+        document.getElementById("message-screen").classList.remove("hidden");
+        typeWriter(); // ✅ Start typing after reveal
+      }, 1000);
+    }
+
+    function triggerSparkles(e) {
+      const sparkleContainer = document.createElement('div');
+      sparkleContainer.className = 'sparkle-container';
+      document.body.appendChild(sparkleContainer);
+
+      for (let i = 0; i < 20; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        sparkle.style.left = `${e.clientX}px`;
+        sparkle.style.top = `${e.clientY}px`;
+
+        const offsetX = (Math.random() - 0.5) * 100 + 'px';
+        const offsetY = (Math.random() - 0.5) * 100 + 'px';
+        sparkle.style.setProperty('--x', offsetX);
+        sparkle.style.setProperty('--y', offsetY);
+
+        sparkleContainer.appendChild(sparkle);
+      }
+
+      setTimeout(() => sparkleContainer.remove(), 1000);
+    }
+
+    function startCalendar() {
+      const msg = document.getElementById("message-screen");
+      msg.classList.add("fade-out");
+
+      const music = document.getElementById("bg-music");
+      music.volume = 0;
+      music.play().catch(() => {});
+      let v = 0;
+      const fade = setInterval(() => {
+        if (v < 0.3) {
+          music.volume = v += 0.01;
+        } else clearInterval(fade);
+      }, 100);
+
+      setTimeout(() => msg.style.display = "none", 1000);
+    }
+
+    // HEARTS
+    const numHearts = 60;
+    for (let h = 0; h < numHearts; h++) {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.style.top = `${Math.random() * 100}vh`;
+      heart.style.left = `${Math.random() * 100}vw`;
+      heart.style.animationDuration = (5 + Math.random() * 6) + 's';
+      document.body.appendChild(heart);
+    }
+
+    // CURSOR EFFECTS
+    const cursorDot = document.createElement('div');
+    cursorDot.className = 'cursor-dot';
+    document.body.appendChild(cursorDot);
+
+    document.addEventListener('mousemove', (e) => {
+      cursorDot.style.top = `${e.clientY}px`;
+      cursorDot.style.left = `${e.clientX}px`;
+      const trail = document.createElement('div');
+      trail.className = 'cursor-trail';
+      trail.style.top = `${e.clientY}px`;
+      trail.style.left = `${e.clientX}px`;
+      document.body.appendChild(trail);
+      setTimeout(() => trail.remove(), 500);
+    });
+
+    document.addEventListener('click', (e) => {
+      const ripple = document.createElement('div');
+      ripple.className = 'click-ripple';
+      ripple.style.top = `${e.clientY}px`;
+      ripple.style.left = `${e.clientX}px`;
+      document.body.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 600);
+    });
+
+    // FLOATING MEDIA
+    const floatingMedia = [
+      "1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", "6.jpg",
+      "7.jpg", "8.jpg", "9.jpg", "10.jpg", "11.jpg", "12.jpg",
+      "13.jpg", "14.jpg", "15.jpg", "16.jpg", "17.jpg", "18.jpg",
+      "19.jpg", "20.jpg", "21.mp4", "22.mp4", "23.mp4", "24.mp4"
+    ];
+    floatingMedia.forEach((src) => {
+      const el = src.endsWith(".mp4") ? document.createElement("video") : document.createElement("img");
+      if (el.tagName === "VIDEO") {
+        Object.assign(el, { src, muted: true, autoplay: true, loop: true, playsInline: true });
+      } else {
+        el.src = src;
+      }
+      el.className = `floating-media ${Math.random() < 0.5 ? 'tilt-left' : 'tilt-right'}`;
+      el.style.top = `${Math.random() * 85}vh`;
+      el.style.left = `${Math.random() * 85}vw`;
+      el.style.animationDuration = `${30 + Math.random() * 20}s`;
+      document.body.appendChild(el);
+    });
+
+    // CALENDAR
+      const wishes = [
+        "Massage night 🧴", "Breakfast in bed 🍳", "Movie night 🍿", "Yes Day 🫡", "Late night drive 🌃",
+        "Cinema date 🍿", "Boba run ☕", "Cuddle session 🧸", "You choose dinner 🥡", "Baking together 🍪",
+        "Self care night 🛁", "Pajama + movie day 🧦", "Your playlist 🎶", "Stargazing 🌌",
+        "Adventure 🛣️", "All the hoodies 👕", "Order munchies 🍔", "Matcha on me 🧋",
+        "Picnic 🧺", "Breakfast date 🥞", "I'll write you a poem 🩷", "Deep convo 🤐",
+        "Romantic candles 🕯️", "Anything you want 😉", "Date night 🌃", "Room cleaning 🧼",
+        "Compliment bomb 💣", "Rom-com night 💋", "Surprise day 🎁", "Hug attack 🫂"
+      ];
+    
+      let opened = JSON.parse(localStorage.getItem("openedCards")) || [];
+      let crossedOut = JSON.parse(localStorage.getItem("crossedOutCards")) || [];
+    
+      const calendar = document.getElementById("calendar");
+    
+      function createCard(i) {
+        const card = document.createElement("div");
+        card.className = "card";
+        const label = document.createElement("div");
+        label.className = "card-label";
+        label.innerText = `Wish ${i + 1}`;
+    
+        const inner = document.createElement("div");
+        inner.className = "card-inner";
+        inner.innerText = wishes[i];
+    
+        if (opened.includes(i)) {
+          card.classList.add("opened");
+          card.append(label, inner);
+          if (crossedOut.includes(i)) {
+            card.classList.add("crossed");
+          }
+        } else {
+          card.innerText = `Wish ${i + 1}`;
+        }
+    
+        card.addEventListener("click", () => {
+          if (!opened.includes(i)) {
+            card.innerHTML = "";
+            card.classList.add("opened");
+            card.append(label, inner);
+            opened.push(i);
+            localStorage.setItem("openedCards", JSON.stringify(opened));
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+          } else if (!crossedOut.includes(i)) {
+            card.classList.add("crossed");
+            crossedOut.push(i);
+            localStorage.setItem("crossedOutCards", JSON.stringify(crossedOut));
+          }
+        });
+    
+        calendar.appendChild(card);
+      }
+    
+      for (let i = 0; i < wishes.length; i++) {
+        createCard(i);
+      }
+    </script>    
+</body>
+</html>
